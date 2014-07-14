@@ -1,0 +1,8 @@
+message GarageCommand {                                                               
+    required Command command = 1;                                           
+    required uint32 garageId = 2;                                                
+    
+    enum Command {
+        TRIGGER_DOOR=1;
+    }
+}

@@ -2,6 +2,8 @@
 #include <sstream>
 #include <PiServer/PiServer.h>
 
+#include "GarageDoorBridge.h"
+
 #define DEFAULT_PORT_NUMBER     10002
 using namespace std;
 
@@ -38,12 +40,16 @@ int main(int argc, char **argv) {
             }
     }
     
-    try {
-        PiServer piServer = PiServer(portNumber);
-    } catch (exception e) {
-        cerr << "PiServer crashed with exception: " << e.what() << endl;
-        exit(EXIT_FAILURE);
-    }
+    PiServer piServer = PiServer();
     
+    PiParser& parser = piServer.getPiParser();
+
+    std::shared_ptr<CustomParser> garageMetaParser(new GarageDoorBridge());
+
+    parser.registerParserForID(garageMetaParser, 1000, 1000);
+
+
+    piServer.connectToPort(portNumber);
+
     return 0;
 }

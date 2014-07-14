@@ -1,0 +1,3 @@
+message GarageMetaData {
+    optional int32 doorCount = 1;
+}
