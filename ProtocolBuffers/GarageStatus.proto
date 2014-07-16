@@ -1,5 +1,9 @@
 message GarageStatus {
-    required uint32 garageId = 1;
-    required uint64 timestamp = 2; //Seconds since Jan 1, 1970 UTC
-    required bool isClosed = 3;
+    message DoorStatus {
+        required uint32 garageId = 1;
+        required uint64 timestamp = 2; //Seconds since Jan 1, 1970 UTC
+        required bool isClosed = 3;
+    }
+
+    repeated DoorStatus doors = 1;
 }
