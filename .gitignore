@@ -21,5 +21,8 @@
 *.app
 GarageServer
 
+# Python (Used for You Complete Me)
+*.pyc
+
 bin/
 build/
