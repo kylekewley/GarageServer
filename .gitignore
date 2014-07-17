@@ -26,3 +26,6 @@ GarageServer
 
 bin/
 build/
+
+#Vim swap files
+*.swp
