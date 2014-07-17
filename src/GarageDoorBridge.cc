@@ -1,5 +1,13 @@
 #include "GarageDoorBridge.h"
 
+//Constants
+#include "GarageConstants.h"
+
+//Protocol Buffers
+#include "GarageMetaData.pb.h"
+#include "GarageStatus.pb.h"
+#include "GarageCommand.pb.h"
+
 using namespace std;
 
 GarageDoorBridge::GarageDoorBridge(ClientManager& clientManager): clientManager(clientManager) {
@@ -9,11 +17,13 @@ GarageDoorBridge::GarageDoorBridge(ClientManager& clientManager): clientManager(
 
 void GarageDoorBridge::registerParsers() {
     shared_ptr<CustomParser> garageMetaParser(new GarageMetaParser(*this));
-    clientManager._defaultParser->registerParserForID(garageMetaParser, 1000, 1000);
-
+    clientManager._defaultParser->registerParserForID(garageMetaParser, GARAGE_META_PARSER_ID, GARAGE_META_PARSER_ID);
 
     shared_ptr<CustomParser> garageStatusParser(new GarageStatusParser(*this));
-    clientManager._defaultParser->registerParserForID(garageStatusParser, 1002, 1002);
+    clientManager._defaultParser->registerParserForID(garageStatusParser, GARAGE_STATUS_PARSER_ID, GARAGE_STATUS_PARSER_ID);
+
+    shared_ptr<CustomParser> garageCommandParser(new GarageCommandParser(*this));
+    clientManager._defaultParser->registerParserForID(garageCommandParser, GARAGE_COMMAND_PARSER_ID, GARAGE_COMMAND_PARSER_ID);
 }
 
 
@@ -41,3 +51,12 @@ ProtocolBuffer* GarageDoorBridge::GarageStatusParser::parseBuffer(const GarageSt
 
     return status;
 }
+
+
+ProtocolBuffer* GarageDoorBridge::GarageCommandParser::parseBuffer(const GarageCommand*, int) const {
+    //TODO: Do something with the garage open command.
+
+    //Just send back a confirmation that we parsed successfully
+    return NULL;
+}
+
