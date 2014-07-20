@@ -31,4 +31,4 @@ build/
 *.swp
 
 #sqlite databases
-.sqlite
+*.sqlite

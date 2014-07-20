@@ -52,6 +52,15 @@ void GarageDoorBridge::registerParsers() {
     cout << "Registration for GarageCommandParser ID: " <<
         to_string(GARAGE_COMMAND_PARSER_ID) <<
         " returned: " << (registerSuccess ? "Success" : "Failue") << endl;
+
+    //Register the hitoryParser
+    shared_ptr<CustomParser> hitoryParser(new GarageHistoryParser(*this));
+    registerSuccess = clientManager._defaultParser->registerParserForID(
+            hitoryParser, GARAGE_HISTORY_PARSER_ID, GARAGE_HISTORY_PARSER_ID);
+    //Print success or failure
+    cout << "Registration for GarageHistoryParser ID: " <<
+        to_string(GARAGE_HISTORY_PARSER_ID) <<
+        " returned: " << (registerSuccess ? "Success" : "Failue") << endl;
 }
 
 
@@ -149,8 +158,45 @@ int GarageDoorBridge::createHistoryTable(sqlite3* db) {
 /* ###Querying the Database### */
 
 GarageStatus* GarageDoorBridge::getGarageHistory(int32_t startTime, int32_t timespan) {
+    stringstream query;
+    query << "SELECT ROWID, * FROM " << HISTORY_TABLE_NAME << " "
+        << "WHERE timestamp BETWEEN ? AND ?;";
 
-    return new GarageStatus();
+    sqlite3_stmt* preparedStatement;
+    int result = sqlite3_prepare_v2(database, query.str().c_str(), query.str().length(), &preparedStatement, NULL);
+    if (result != SQLITE_OK) {
+        sqlite3_finalize(preparedStatement);
+        return NULL;
+    }
+
+    result = sqlite3_bind_int(preparedStatement, 1, startTime);
+    if (result != SQLITE_OK) {
+        sqlite3_finalize(preparedStatement);
+        return NULL;
+    }
+    result = sqlite3_bind_int(preparedStatement, 2, startTime+timespan);
+    if (result != SQLITE_OK) {
+        sqlite3_finalize(preparedStatement);
+        return NULL;
+    }
+
+    GarageStatus* garageStatus = new GarageStatus();
+
+    while (sqlite3_step(preparedStatement) == SQLITE_ROW) {
+        int64_t rowId = sqlite3_column_int64(preparedStatement, 0);
+        int garageId = sqlite3_column_int(preparedStatement, 1);
+        bool didClose = sqlite3_column_int(preparedStatement, 2) != 0;
+        int32_t timestamp = sqlite3_column_int(preparedStatement, 3);
+
+        GarageStatus_DoorStatus* door = garageStatus->add_doors();
+        door->set_garageid(garageId);
+        door->set_isclosed(didClose);
+        door->set_timestamp(timestamp);
+        door->set_uniqueid((uint32_t)rowId);
+    }
+    sqlite3_finalize(preparedStatement);
+
+    return garageStatus;
 }
 
 
@@ -223,6 +269,8 @@ parseBuffer(const GarageHistoryRequest* command, int) const {
         //interval and no startTime
         interval = -abs(command->interval());
     }
+    cout << "Requesting history with interval: " << to_string(startTime)
+        << " to " << to_string(startTime+interval) << endl;
 
     return _parent.getGarageHistory(startTime, interval);
 }
