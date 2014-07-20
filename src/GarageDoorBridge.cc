@@ -2,6 +2,8 @@
 
 //standard library
 #include <chrono>
+#include <sstream>
+
 //Constants
 #include "GarageConstants.h"
 
@@ -9,11 +11,14 @@
 using namespace std;
 
 const string GarageDoorBridge::HISTORY_TABLE_NAME = "garage_history";
+const string GarageDoorBridge::HISTORY_DATABASE_PATH = "./history_db.sqlite";
 
 GarageDoorBridge::GarageDoorBridge(ClientManager& clientManager):
     clientManager(clientManager) {
     //Register the default parsers
     registerParsers();
+    int result = connectToDatabase(HISTORY_DATABASE_PATH, &database);
+    cout << "Connection to database " << (result==SQLITE_OK ? "succeeded" : "failed") << " with code " << to_string(result) << endl;
 }
 
 void GarageDoorBridge::registerParsers() {
@@ -53,55 +58,91 @@ void GarageDoorBridge::registerParsers() {
 /* ##Database Methods## */
 /* -------------------- */
 
-int GarageDoorBridge::connectToDatabase(string& databasePath, sqlite3** outDb) {
+int GarageDoorBridge::connectToDatabase(const string& databasePath, sqlite3** outDb) {
     int result = sqlite3_open_v2(databasePath.c_str(), outDb,
             SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
     if (result != SQLITE_OK)
         return result;
 
     //Create the table if it doesn't exist
-    if (!tableExists(*outDb, HISTORY_TABLE_NAME)) {
+    if (!tableExists(*outDb, HISTORY_TABLE_NAME, &result)) {
+        if (result != SQLITE_OK) {
+            return result;
+        }
         //Create the table
         result = createHistoryTable(*outDb);
         if (result != SQLITE_OK)
             return result;
     }
 
+
     return SQLITE_OK;
 }
 
 
-bool GarageDoorBridge::tableExists(sqlite3* db, const string& tableName) {
+bool GarageDoorBridge::tableExists(sqlite3* db, const string& tableName, int* result) {
 
-    string query = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='?1'";
+    string query = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name=?;";
 
     sqlite3_stmt* preparedStatement;
-    int result = sqlite3_prepare_v2(db, query.c_str(), query.length(), 
+    *result = sqlite3_prepare_v2(db, query.c_str(), query.length(), 
             &preparedStatement, NULL);
-    if (result != SQLITE_OK)
+    if (*result != SQLITE_OK) {
+        sqlite3_finalize(preparedStatement);
         return false;
+    }
 
-    result = sqlite3_bind_text(preparedStatement, 1, tableName.c_str(), tableName.length(), SQLITE_STATIC);
-    if (result != SQLITE_OK)
+    *result = sqlite3_bind_text(preparedStatement, 1, tableName.c_str(), tableName.length(), SQLITE_STATIC);
+    if (*result != SQLITE_OK) {
+        sqlite3_finalize(preparedStatement);
         return false;
+    }
 
-    result = sqlite3_step(preparedStatement);
-    if (result != SQLITE_ROW)
+    *result = sqlite3_step(preparedStatement);
+    if (*result >= SQLITE_ROW) {
+        *result = SQLITE_OK;
+    }
+    if (*result != SQLITE_OK) {
+        sqlite3_finalize(preparedStatement);
         return false;
-    if (sqlite3_column_count(preparedStatement) == 0)
+    }
+    if (sqlite3_column_count(preparedStatement) == 0) {
+        sqlite3_finalize(preparedStatement);
         return false;
+    }
 
     int num = sqlite3_column_int(preparedStatement, 0);
-    
+
     //Clean up
     sqlite3_finalize(preparedStatement);
     return num > 0;
 }
 
 int GarageDoorBridge::createHistoryTable(sqlite3* db) {
+    stringstream query;
+    query << "CREATE TABLE IF NOT EXISTS " << HISTORY_TABLE_NAME
+        << " (garage_id INTEGER DEFAULT (-1), "
+        << "did_close BOOLEAN NOT NULL, "
+        << "timestamp INTEGER DEFAULT(strftime('%s', 'now')));" << endl;
 
-    return 0;
+    sqlite3_stmt* preparedStatement;
+    int result = sqlite3_prepare_v2(db, query.str().c_str(), query.str().length(), &preparedStatement, NULL);
+    if (result != SQLITE_OK) {
+        sqlite3_finalize(preparedStatement);
+        return result;
+    }
 
+    result = sqlite3_step(preparedStatement);
+    if (result >= SQLITE_ROW) {
+        result = SQLITE_OK;
+    }
+    if (result != SQLITE_OK) {
+        sqlite3_finalize(preparedStatement);
+        return result;
+    }
+
+    sqlite3_finalize(preparedStatement);
+    return result;
 }
 
 

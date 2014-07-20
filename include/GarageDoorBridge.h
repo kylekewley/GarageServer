@@ -39,6 +39,10 @@ private:
     static const string HISTORY_TABLE_NAME;
 
     /**
+     * The filepath for the database
+     */
+    static const string HISTORY_DATABASE_PATH;
+    /**
      * The ClientManager that is used to send messages to clients.
      */
     ClientManager& clientManager;
@@ -71,15 +75,18 @@ private:
      *
      * @return  SQLITE_OK or an error code.
      */
-    int connectToDatabase(string& databasePath, sqlite3** outDb);
+    int connectToDatabase(const string& databasePath, sqlite3** outDb);
 
     /**
      * @param   db          The database handle.
      * @param   tableName   The name of the table to check existence.
+     * @param   result      The result of the query.
      *
-     * @return  true if the table exists.
+     * @return  true if the table exists, false if the table doesn't exist
+     * or there is an error. If there was an error, the out parameter result
+     * will be set to the error code.
      */
-    bool tableExists(sqlite3* db, const string& tableName);
+    bool tableExists(sqlite3* db, const string& tableName, int* result);
 
     /**
      * Creates the garage history table in the database.

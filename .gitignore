@@ -29,3 +29,6 @@ build/
 
 #Vim swap files
 *.swp
+
+#sqlite databases
+.sqlite
