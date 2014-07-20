@@ -90,6 +90,13 @@ class GarageStatus_DoorStatus : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
+  // required uint32 uniqueId = 4;
+  inline bool has_uniqueid() const;
+  inline void clear_uniqueid();
+  static const int kUniqueIdFieldNumber = 4;
+  inline ::google::protobuf::uint32 uniqueid() const;
+  inline void set_uniqueid(::google::protobuf::uint32 value);
+
   // required uint32 garageId = 1;
   inline bool has_garageid() const;
   inline void clear_garageid();
@@ -97,12 +104,12 @@ class GarageStatus_DoorStatus : public ::google::protobuf::Message {
   inline ::google::protobuf::uint32 garageid() const;
   inline void set_garageid(::google::protobuf::uint32 value);
 
-  // required uint64 timestamp = 2;
+  // required uint32 timestamp = 2;
   inline bool has_timestamp() const;
   inline void clear_timestamp();
   static const int kTimestampFieldNumber = 2;
-  inline ::google::protobuf::uint64 timestamp() const;
-  inline void set_timestamp(::google::protobuf::uint64 value);
+  inline ::google::protobuf::uint32 timestamp() const;
+  inline void set_timestamp(::google::protobuf::uint32 value);
 
   // required bool isClosed = 3;
   inline bool has_isclosed() const;
@@ -113,6 +120,8 @@ class GarageStatus_DoorStatus : public ::google::protobuf::Message {
 
   // @@protoc_insertion_point(class_scope:GarageStatus.DoorStatus)
  private:
+  inline void set_has_uniqueid();
+  inline void clear_has_uniqueid();
   inline void set_has_garageid();
   inline void clear_has_garageid();
   inline void set_has_timestamp();
@@ -122,12 +131,13 @@ class GarageStatus_DoorStatus : public ::google::protobuf::Message {
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
-  ::google::protobuf::uint64 timestamp_;
+  ::google::protobuf::uint32 uniqueid_;
   ::google::protobuf::uint32 garageid_;
+  ::google::protobuf::uint32 timestamp_;
   bool isclosed_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
 
   friend void  protobuf_AddDesc_GarageStatus_2eproto();
   friend void protobuf_AssignDesc_GarageStatus_2eproto();
@@ -230,15 +240,37 @@ class GarageStatus : public ::google::protobuf::Message {
 
 // GarageStatus_DoorStatus
 
-// required uint32 garageId = 1;
-inline bool GarageStatus_DoorStatus::has_garageid() const {
+// required uint32 uniqueId = 4;
+inline bool GarageStatus_DoorStatus::has_uniqueid() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void GarageStatus_DoorStatus::set_has_garageid() {
+inline void GarageStatus_DoorStatus::set_has_uniqueid() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void GarageStatus_DoorStatus::clear_has_garageid() {
+inline void GarageStatus_DoorStatus::clear_has_uniqueid() {
   _has_bits_[0] &= ~0x00000001u;
+}
+inline void GarageStatus_DoorStatus::clear_uniqueid() {
+  uniqueid_ = 0u;
+  clear_has_uniqueid();
+}
+inline ::google::protobuf::uint32 GarageStatus_DoorStatus::uniqueid() const {
+  return uniqueid_;
+}
+inline void GarageStatus_DoorStatus::set_uniqueid(::google::protobuf::uint32 value) {
+  set_has_uniqueid();
+  uniqueid_ = value;
+}
+
+// required uint32 garageId = 1;
+inline bool GarageStatus_DoorStatus::has_garageid() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void GarageStatus_DoorStatus::set_has_garageid() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void GarageStatus_DoorStatus::clear_has_garageid() {
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline void GarageStatus_DoorStatus::clear_garageid() {
   garageid_ = 0u;
@@ -252,37 +284,37 @@ inline void GarageStatus_DoorStatus::set_garageid(::google::protobuf::uint32 val
   garageid_ = value;
 }
 
-// required uint64 timestamp = 2;
+// required uint32 timestamp = 2;
 inline bool GarageStatus_DoorStatus::has_timestamp() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
 inline void GarageStatus_DoorStatus::set_has_timestamp() {
-  _has_bits_[0] |= 0x00000002u;
+  _has_bits_[0] |= 0x00000004u;
 }
 inline void GarageStatus_DoorStatus::clear_has_timestamp() {
-  _has_bits_[0] &= ~0x00000002u;
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void GarageStatus_DoorStatus::clear_timestamp() {
-  timestamp_ = GOOGLE_ULONGLONG(0);
+  timestamp_ = 0u;
   clear_has_timestamp();
 }
-inline ::google::protobuf::uint64 GarageStatus_DoorStatus::timestamp() const {
+inline ::google::protobuf::uint32 GarageStatus_DoorStatus::timestamp() const {
   return timestamp_;
 }
-inline void GarageStatus_DoorStatus::set_timestamp(::google::protobuf::uint64 value) {
+inline void GarageStatus_DoorStatus::set_timestamp(::google::protobuf::uint32 value) {
   set_has_timestamp();
   timestamp_ = value;
 }
 
 // required bool isClosed = 3;
 inline bool GarageStatus_DoorStatus::has_isclosed() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline void GarageStatus_DoorStatus::set_has_isclosed() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000008u;
 }
 inline void GarageStatus_DoorStatus::clear_has_isclosed() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void GarageStatus_DoorStatus::clear_isclosed() {
   isclosed_ = false;

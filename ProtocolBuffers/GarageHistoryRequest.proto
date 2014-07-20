@@ -1,0 +1,8 @@
+message GarageHistoryRequest {
+    optional uint32 startTime = 1; //Defined with Epoch time
+    optional sint32 interval = 2; //endTime = startTime + interval. interval can be negative.
+
+    //If startTime is omited, the response will be the current epoch - |interval|
+    //If interval is omited, the response will be the startTime + 24 hours
+    //If both are omited, the response will be all records in the previous 24 hours
+}

@@ -94,6 +94,7 @@ flags = [
 './include',
 '-I',
 './src',
+'-lsqlite3',
 ]
 
 

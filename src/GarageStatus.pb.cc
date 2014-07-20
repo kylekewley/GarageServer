@@ -50,7 +50,8 @@ void protobuf_AssignDesc_GarageStatus_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(GarageStatus));
   GarageStatus_DoorStatus_descriptor_ = GarageStatus_descriptor_->nested_type(0);
-  static const int GarageStatus_DoorStatus_offsets_[3] = {
+  static const int GarageStatus_DoorStatus_offsets_[4] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageStatus_DoorStatus, uniqueid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageStatus_DoorStatus, garageid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageStatus_DoorStatus, timestamp_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageStatus_DoorStatus, isclosed_),
@@ -100,10 +101,11 @@ void protobuf_AddDesc_GarageStatus_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\022GarageStatus.proto\"|\n\014GarageStatus\022\'\n\005"
-    "doors\030\001 \003(\0132\030.GarageStatus.DoorStatus\032C\n"
-    "\nDoorStatus\022\020\n\010garageId\030\001 \002(\r\022\021\n\ttimesta"
-    "mp\030\002 \002(\004\022\020\n\010isClosed\030\003 \002(\010", 146);
+    "\n\022GarageStatus.proto\"\216\001\n\014GarageStatus\022\'\n"
+    "\005doors\030\001 \003(\0132\030.GarageStatus.DoorStatus\032U"
+    "\n\nDoorStatus\022\020\n\010uniqueId\030\004 \002(\r\022\020\n\010garage"
+    "Id\030\001 \002(\r\022\021\n\ttimestamp\030\002 \002(\r\022\020\n\010isClosed\030"
+    "\003 \002(\010", 165);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "GarageStatus.proto", &protobuf_RegisterTypes);
   GarageStatus::default_instance_ = new GarageStatus();
@@ -123,6 +125,7 @@ struct StaticDescriptorInitializer_GarageStatus_2eproto {
 // ===================================================================
 
 #ifndef _MSC_VER
+const int GarageStatus_DoorStatus::kUniqueIdFieldNumber;
 const int GarageStatus_DoorStatus::kGarageIdFieldNumber;
 const int GarageStatus_DoorStatus::kTimestampFieldNumber;
 const int GarageStatus_DoorStatus::kIsClosedFieldNumber;
@@ -144,8 +147,9 @@ GarageStatus_DoorStatus::GarageStatus_DoorStatus(const GarageStatus_DoorStatus& 
 
 void GarageStatus_DoorStatus::SharedCtor() {
   _cached_size_ = 0;
+  uniqueid_ = 0u;
   garageid_ = 0u;
-  timestamp_ = GOOGLE_ULONGLONG(0);
+  timestamp_ = 0u;
   isclosed_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -182,8 +186,9 @@ GarageStatus_DoorStatus* GarageStatus_DoorStatus::New() const {
 
 void GarageStatus_DoorStatus::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    uniqueid_ = 0u;
     garageid_ = 0u;
-    timestamp_ = GOOGLE_ULONGLONG(0);
+    timestamp_ = 0u;
     isclosed_ = false;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -211,13 +216,13 @@ bool GarageStatus_DoorStatus::MergePartialFromCodedStream(
         break;
       }
 
-      // required uint64 timestamp = 2;
+      // required uint32 timestamp = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_timestamp:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &timestamp_)));
           set_has_timestamp();
         } else {
@@ -236,6 +241,22 @@ bool GarageStatus_DoorStatus::MergePartialFromCodedStream(
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &isclosed_)));
           set_has_isclosed();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(32)) goto parse_uniqueId;
+        break;
+      }
+
+      // required uint32 uniqueId = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_uniqueId:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &uniqueid_)));
+          set_has_uniqueid();
         } else {
           goto handle_uninterpreted;
         }
@@ -266,14 +287,19 @@ void GarageStatus_DoorStatus::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->garageid(), output);
   }
 
-  // required uint64 timestamp = 2;
+  // required uint32 timestamp = 2;
   if (has_timestamp()) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt64(2, this->timestamp(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->timestamp(), output);
   }
 
   // required bool isClosed = 3;
   if (has_isclosed()) {
     ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->isclosed(), output);
+  }
+
+  // required uint32 uniqueId = 4;
+  if (has_uniqueid()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->uniqueid(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -289,14 +315,19 @@ void GarageStatus_DoorStatus::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->garageid(), target);
   }
 
-  // required uint64 timestamp = 2;
+  // required uint32 timestamp = 2;
   if (has_timestamp()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(2, this->timestamp(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->timestamp(), target);
   }
 
   // required bool isClosed = 3;
   if (has_isclosed()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->isclosed(), target);
+  }
+
+  // required uint32 uniqueId = 4;
+  if (has_uniqueid()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->uniqueid(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -310,6 +341,13 @@ int GarageStatus_DoorStatus::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required uint32 uniqueId = 4;
+    if (has_uniqueid()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->uniqueid());
+    }
+
     // required uint32 garageId = 1;
     if (has_garageid()) {
       total_size += 1 +
@@ -317,10 +355,10 @@ int GarageStatus_DoorStatus::ByteSize() const {
           this->garageid());
     }
 
-    // required uint64 timestamp = 2;
+    // required uint32 timestamp = 2;
     if (has_timestamp()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->timestamp());
     }
 
@@ -356,6 +394,9 @@ void GarageStatus_DoorStatus::MergeFrom(const ::google::protobuf::Message& from)
 void GarageStatus_DoorStatus::MergeFrom(const GarageStatus_DoorStatus& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_uniqueid()) {
+      set_uniqueid(from.uniqueid());
+    }
     if (from.has_garageid()) {
       set_garageid(from.garageid());
     }
@@ -382,13 +423,14 @@ void GarageStatus_DoorStatus::CopyFrom(const GarageStatus_DoorStatus& from) {
 }
 
 bool GarageStatus_DoorStatus::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
 
   return true;
 }
 
 void GarageStatus_DoorStatus::Swap(GarageStatus_DoorStatus* other) {
   if (other != this) {
+    std::swap(uniqueid_, other->uniqueid_);
     std::swap(garageid_, other->garageid_);
     std::swap(timestamp_, other->timestamp_);
     std::swap(isclosed_, other->isclosed_);
