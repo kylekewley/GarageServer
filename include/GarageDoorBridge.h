@@ -5,6 +5,9 @@
 #include <PiServer/CustomBufferParser.imp.h>
 #include <PiServer/ClientManager.h>
 
+//Standard library
+#include <utility>
+
 //The sqlite3 library
 #include <sqlite3.h>
 
@@ -13,6 +16,8 @@
 #include "GarageStatus.pb.h"
 #include "GarageCommand.pb.h"
 #include "GarageHistoryRequest.pb.h"
+
+using namespace std;
 
 class GarageDoorBridge {
 
@@ -52,6 +57,14 @@ private:
      */
     sqlite3* database;
 
+    typedef enum {
+        COLUMN_UNIQUE_ID,
+        COLUMN_GARAGE_ID,
+        COLUMN_DID_CLOSE,
+        COLUMN_TIMESTAMP,
+    }HISTORY_COLUMN_NAMES;
+
+    static string getColumnName(HISTORY_COLUMN_NAMES column);
     /**
      * Creates all of the inner class parsers and registers them with
      * the PiParser instance held by the clientManager
@@ -114,6 +127,8 @@ private:
      * @return A GarageStatus object containing all of the history requested.
      */
     GarageStatus* getGarageHistory(int32_t startTime, int32_t timespan);
+
+    int addGarageHistory(int garageId, bool didClose);
 
     /* ##Simple Helper Methods## */
     /* ------------------------- */

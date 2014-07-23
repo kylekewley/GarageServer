@@ -13,6 +13,26 @@ using namespace std;
 const string GarageDoorBridge::HISTORY_TABLE_NAME = "garage_history";
 const string GarageDoorBridge::HISTORY_DATABASE_PATH = "./history_db.sqlite";
 
+string GarageDoorBridge::getColumnName(HISTORY_COLUMN_NAMES column) {
+    string result = string();
+    switch(column) {
+        case COLUMN_UNIQUE_ID:
+            result = string("unique_id");
+            break;
+        case COLUMN_TIMESTAMP:
+            result = string("timestamp");
+            break;
+        case COLUMN_DID_CLOSE:
+            result = string("did_close");
+            break;
+        case COLUMN_GARAGE_ID:
+            result = string("garage_id");
+            break;
+    }
+
+    return result;
+}
+
 GarageDoorBridge::GarageDoorBridge(ClientManager& clientManager):
     clientManager(clientManager) {
     //Register the default parsers
@@ -129,10 +149,12 @@ bool GarageDoorBridge::tableExists(sqlite3* db, const string& tableName, int* re
 
 int GarageDoorBridge::createHistoryTable(sqlite3* db) {
     stringstream query;
-    query << "CREATE TABLE IF NOT EXISTS " << HISTORY_TABLE_NAME
-        << " (garage_id INTEGER DEFAULT (-1), "
-        << "did_close BOOLEAN NOT NULL, "
-        << "timestamp INTEGER DEFAULT(strftime('%s', 'now')));" << endl;
+    query << "CREATE TABLE IF NOT EXISTS " << HISTORY_TABLE_NAME << " (" 
+        << getColumnName(COLUMN_UNIQUE_ID) << " INTEGER PRIMARY KEY"
+        << getColumnName(COLUMN_GARAGE_ID) << " INTEGER DEFAULT (-1), "
+        << getColumnName(COLUMN_DID_CLOSE) << " BOOLEAN NOT NULL, "
+        << getColumnName(COLUMN_TIMESTAMP) << " INTEGER DEFAULT(strftime('%s', 'now')));" 
+        << endl;
 
     sqlite3_stmt* preparedStatement;
     int result = sqlite3_prepare_v2(db, query.str().c_str(), query.str().length(), &preparedStatement, NULL);
@@ -159,8 +181,8 @@ int GarageDoorBridge::createHistoryTable(sqlite3* db) {
 
 GarageStatus* GarageDoorBridge::getGarageHistory(int32_t startTime, int32_t timespan) {
     stringstream query;
-    query << "SELECT ROWID, * FROM " << HISTORY_TABLE_NAME << " "
-        << "WHERE timestamp BETWEEN ? AND ?;";
+    query << "SELECT * FROM " << HISTORY_TABLE_NAME << " "
+        << "WHERE " << getColumnName(COLUMN_TIMESTAMP) << " BETWEEN ? AND ?;";
 
     sqlite3_stmt* preparedStatement;
     int result = sqlite3_prepare_v2(database, query.str().c_str(), query.str().length(), &preparedStatement, NULL);
@@ -183,10 +205,10 @@ GarageStatus* GarageDoorBridge::getGarageHistory(int32_t startTime, int32_t time
     GarageStatus* garageStatus = new GarageStatus();
 
     while (sqlite3_step(preparedStatement) == SQLITE_ROW) {
-        int64_t rowId = sqlite3_column_int64(preparedStatement, 0);
-        int garageId = sqlite3_column_int(preparedStatement, 1);
-        bool didClose = sqlite3_column_int(preparedStatement, 2) != 0;
-        int32_t timestamp = sqlite3_column_int(preparedStatement, 3);
+        int64_t rowId = sqlite3_column_int64(preparedStatement, COLUMN_UNIQUE_ID);
+        int garageId = sqlite3_column_int(preparedStatement, COLUMN_GARAGE_ID);
+        bool didClose = sqlite3_column_int(preparedStatement, COLUMN_DID_CLOSE) != 0;
+        int32_t timestamp = sqlite3_column_int(preparedStatement, COLUMN_TIMESTAMP);
 
         GarageStatus_DoorStatus* door = garageStatus->add_doors();
         door->set_garageid(garageId);
@@ -199,6 +221,34 @@ GarageStatus* GarageDoorBridge::getGarageHistory(int32_t startTime, int32_t time
     return garageStatus;
 }
 
+int GarageDoorBridge::addGarageHistory(int garageId, bool didClose) {
+    stringstream query;
+    query << "INSERT INTO " << HISTORY_TABLE_NAME << " (" 
+          << getColumnName(COLUMN_GARAGE_ID) << ", "
+          << getColumnName(COLUMN_DID_CLOSE) << ") "
+          << "VALUES (" 
+          << to_string(garageId) << ", "
+          << to_string(didClose) << ");";
+
+    sqlite3_stmt* preparedStatement;
+    int result = sqlite3_prepare_v2(database, query.str().c_str(), query.str().length(), &preparedStatement, NULL);
+    if (result != SQLITE_OK) {
+        sqlite3_finalize(preparedStatement);
+        return result;
+    }
+
+    result = sqlite3_step(preparedStatement);
+    if (result >= SQLITE_ROW) {
+        result = SQLITE_OK;
+    }
+    if (result != SQLITE_OK) {
+        sqlite3_finalize(preparedStatement);
+        return result;
+    }
+
+    sqlite3_finalize(preparedStatement);
+    return result;
+}
 
 
 /* ##Simple Helper Methods## */
@@ -237,7 +287,6 @@ parseBuffer(const GarageStatus*, int) const {
     }
 
     cout << "Sending back garage status data" << endl;
-
     return status;
 }
 
@@ -249,6 +298,23 @@ parseBuffer(const GarageCommand* command, int) const {
     cout << "Got a garage trigger request... trigger door "  << 
         to_string(command->garageid()) << endl;
     //Just send back a confirmation that we parsed successfully
+
+    GarageStatus* status = new GarageStatus();
+
+    for (int i = 0; i < 2; ++i) {
+        GarageStatus::DoorStatus* door = status->add_doors();
+        door->set_timestamp(1);
+        door->set_garageid(i);
+        door->set_isclosed((i%2)==1);
+        //These doors dont need a unique ID but it is a required field
+        door->set_uniqueid(0);
+    }
+    string groupId = "garage"; 
+    cout << "Sending back garage status data" << endl;
+
+    PiMessage message(9999, *status);
+    delete status;
+    _parent.clientManager.sendMessageToGroup(message, groupId);
     return NULL;
 }
 
@@ -272,5 +338,8 @@ parseBuffer(const GarageHistoryRequest* command, int) const {
     cout << "Requesting history with interval: " << to_string(startTime)
         << " to " << to_string(startTime+interval) << endl;
 
-    return _parent.getGarageHistory(startTime, interval);
+    GarageStatus* buffer = _parent.getGarageHistory(startTime, interval);
+    cout << "Received " << to_string(buffer->doors_size()) << " doors to send." << endl;
+
+    return buffer;
 }

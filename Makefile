@@ -16,7 +16,7 @@ DCOMPILE_FLAGS = -D DEBUG
 # Add additional include paths
 INCLUDES = -I $(SRC_PATH)/ -I ./include
 # General linker settings
-LINK_FLAGS = -lPiServer -lprotobuf -lsqlite3
+LINK_FLAGS = -Wl,-rpath=/usr/local/lib -lPiServer -lprotobuf -lsqlite3 -lwiringPi
 # Additional release-specific linker settings
 RLINK_FLAGS = 
 # Additional debug-specific linker settings

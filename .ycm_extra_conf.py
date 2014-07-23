@@ -95,6 +95,7 @@ flags = [
 '-I',
 './src',
 '-lsqlite3',
+'-lwiringPi',
 ]
 
 
