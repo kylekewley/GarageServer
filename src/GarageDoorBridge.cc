@@ -149,8 +149,8 @@ bool GarageDoorBridge::tableExists(sqlite3* db, const string& tableName, int* re
 
 int GarageDoorBridge::createHistoryTable(sqlite3* db) {
     stringstream query;
-    query << "CREATE TABLE IF NOT EXISTS " << HISTORY_TABLE_NAME << " (" 
-        << getColumnName(COLUMN_UNIQUE_ID) << " INTEGER PRIMARY KEY"
+    query << "CREATE TABLE IF NOT EXISTS " << HISTORY_TABLE_NAME << " ("
+        << getColumnName(COLUMN_UNIQUE_ID) << " INTEGER PRIMARY KEY, "
         << getColumnName(COLUMN_GARAGE_ID) << " INTEGER DEFAULT (-1), "
         << getColumnName(COLUMN_DID_CLOSE) << " BOOLEAN NOT NULL, "
         << getColumnName(COLUMN_TIMESTAMP) << " INTEGER DEFAULT(strftime('%s', 'now')));" 
