@@ -51,10 +51,10 @@ void protobuf_AssignDesc_GarageStatus_2eproto() {
       sizeof(GarageStatus));
   GarageStatus_DoorStatus_descriptor_ = GarageStatus_descriptor_->nested_type(0);
   static const int GarageStatus_DoorStatus_offsets_[4] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageStatus_DoorStatus, uniqueid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageStatus_DoorStatus, garageid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageStatus_DoorStatus, timestamp_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageStatus_DoorStatus, isclosed_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageStatus_DoorStatus, uniqueid_),
   };
   GarageStatus_DoorStatus_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -103,9 +103,9 @@ void protobuf_AddDesc_GarageStatus_2eproto() {
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\022GarageStatus.proto\"\216\001\n\014GarageStatus\022\'\n"
     "\005doors\030\001 \003(\0132\030.GarageStatus.DoorStatus\032U"
-    "\n\nDoorStatus\022\020\n\010uniqueId\030\004 \002(\r\022\020\n\010garage"
-    "Id\030\001 \002(\r\022\021\n\ttimestamp\030\002 \002(\r\022\020\n\010isClosed\030"
-    "\003 \002(\010", 165);
+    "\n\nDoorStatus\022\020\n\010garageId\030\001 \002(\r\022\021\n\ttimest"
+    "amp\030\002 \002(\r\022\020\n\010isClosed\030\003 \002(\010\022\020\n\010uniqueId\030"
+    "\004 \001(\r", 165);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "GarageStatus.proto", &protobuf_RegisterTypes);
   GarageStatus::default_instance_ = new GarageStatus();
@@ -125,10 +125,10 @@ struct StaticDescriptorInitializer_GarageStatus_2eproto {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int GarageStatus_DoorStatus::kUniqueIdFieldNumber;
 const int GarageStatus_DoorStatus::kGarageIdFieldNumber;
 const int GarageStatus_DoorStatus::kTimestampFieldNumber;
 const int GarageStatus_DoorStatus::kIsClosedFieldNumber;
+const int GarageStatus_DoorStatus::kUniqueIdFieldNumber;
 #endif  // !_MSC_VER
 
 GarageStatus_DoorStatus::GarageStatus_DoorStatus()
@@ -147,10 +147,10 @@ GarageStatus_DoorStatus::GarageStatus_DoorStatus(const GarageStatus_DoorStatus& 
 
 void GarageStatus_DoorStatus::SharedCtor() {
   _cached_size_ = 0;
-  uniqueid_ = 0u;
   garageid_ = 0u;
   timestamp_ = 0u;
   isclosed_ = false;
+  uniqueid_ = 0u;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -186,10 +186,10 @@ GarageStatus_DoorStatus* GarageStatus_DoorStatus::New() const {
 
 void GarageStatus_DoorStatus::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    uniqueid_ = 0u;
     garageid_ = 0u;
     timestamp_ = 0u;
     isclosed_ = false;
+    uniqueid_ = 0u;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -248,7 +248,7 @@ bool GarageStatus_DoorStatus::MergePartialFromCodedStream(
         break;
       }
 
-      // required uint32 uniqueId = 4;
+      // optional uint32 uniqueId = 4;
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -297,7 +297,7 @@ void GarageStatus_DoorStatus::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->isclosed(), output);
   }
 
-  // required uint32 uniqueId = 4;
+  // optional uint32 uniqueId = 4;
   if (has_uniqueid()) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->uniqueid(), output);
   }
@@ -325,7 +325,7 @@ void GarageStatus_DoorStatus::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->isclosed(), target);
   }
 
-  // required uint32 uniqueId = 4;
+  // optional uint32 uniqueId = 4;
   if (has_uniqueid()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->uniqueid(), target);
   }
@@ -341,13 +341,6 @@ int GarageStatus_DoorStatus::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required uint32 uniqueId = 4;
-    if (has_uniqueid()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::UInt32Size(
-          this->uniqueid());
-    }
-
     // required uint32 garageId = 1;
     if (has_garageid()) {
       total_size += 1 +
@@ -365,6 +358,13 @@ int GarageStatus_DoorStatus::ByteSize() const {
     // required bool isClosed = 3;
     if (has_isclosed()) {
       total_size += 1 + 1;
+    }
+
+    // optional uint32 uniqueId = 4;
+    if (has_uniqueid()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->uniqueid());
     }
 
   }
@@ -394,9 +394,6 @@ void GarageStatus_DoorStatus::MergeFrom(const ::google::protobuf::Message& from)
 void GarageStatus_DoorStatus::MergeFrom(const GarageStatus_DoorStatus& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_uniqueid()) {
-      set_uniqueid(from.uniqueid());
-    }
     if (from.has_garageid()) {
       set_garageid(from.garageid());
     }
@@ -405,6 +402,9 @@ void GarageStatus_DoorStatus::MergeFrom(const GarageStatus_DoorStatus& from) {
     }
     if (from.has_isclosed()) {
       set_isclosed(from.isclosed());
+    }
+    if (from.has_uniqueid()) {
+      set_uniqueid(from.uniqueid());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -423,17 +423,17 @@ void GarageStatus_DoorStatus::CopyFrom(const GarageStatus_DoorStatus& from) {
 }
 
 bool GarageStatus_DoorStatus::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
 
   return true;
 }
 
 void GarageStatus_DoorStatus::Swap(GarageStatus_DoorStatus* other) {
   if (other != this) {
-    std::swap(uniqueid_, other->uniqueid_);
     std::swap(garageid_, other->garageid_);
     std::swap(timestamp_, other->timestamp_);
     std::swap(isclosed_, other->isclosed_);
+    std::swap(uniqueid_, other->uniqueid_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

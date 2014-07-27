@@ -32,3 +32,8 @@ build/
 
 #sqlite databases
 *.sqlite
+
+#protobuffer intermediates
+ProtocolBuffers/*.pb.cc
+ProtocolBuffers/*.pb.h
+ProtocolBuffers/*.java

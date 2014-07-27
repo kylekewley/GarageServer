@@ -315,6 +315,8 @@ parseBuffer(const GarageCommand* command, int) const {
     PiMessage message(9999, *status);
     delete status;
     _parent.clientManager.sendMessageToGroup(message, groupId);
+
+    _parent.addGarageHistory(command->garageid(), true);
     return NULL;
 }
 

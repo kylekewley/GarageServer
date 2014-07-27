@@ -1,9 +1,9 @@
 message GarageStatus {
     message DoorStatus {
-        required uint32 uniqueId = 4;
         required uint32 garageId = 1;
         required uint32 timestamp = 2; //Seconds since Jan 1, 1970 UTC
         required bool isClosed = 3;
+        optional uint32 uniqueId = 4; //This should only be used for door history
     }
 
     repeated DoorStatus doors = 1;
