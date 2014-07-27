@@ -31,6 +31,7 @@ public:
      */
      GarageDoorBridge(ClientManager& clientManager);
 
+     int getDoorCount() const;
 private:
     /**
      * Test value for the server.
@@ -130,78 +131,7 @@ private:
 
     int addGarageHistory(int garageId, bool didClose);
 
-    /* ##Simple Helper Methods## */
-    /* ------------------------- */
-
-    /**
-     * @return  The current unix epoch time in seconds
-     */
-    uint32_t timeSinceEpoch();
-
-
-    /* ##Inner Parser Classes## */
-    /* ------------------------ */
-
-    /**
-     * Parser class to handle meta data requests
-     */
-    class GarageMetaParser : public CustomBufferParser<GarageMetaData> {
-
-    public:
-        GarageMetaParser(GarageDoorBridge& parent): _parent(parent) {};
-
-        ProtocolBuffer* parseBuffer(const GarageMetaData*, int clientID) const;
-
-    private:
-        GarageDoorBridge& _parent;
-    };
-
-
-    /**
-     * Parser class to handle garage status requests
-     */
-    class GarageStatusParser : public CustomBufferParser<GarageStatus> {
-
-    public:
-        GarageStatusParser(GarageDoorBridge& parent): _parent(parent) {};
-
-        ProtocolBuffer* parseBuffer(const GarageStatus*, int clientID) const;
-
-    private:
-        GarageDoorBridge& _parent;
-    };
-
-
-    /**
-     * Parser class to handle garage door commands
-     */
-    class GarageCommandParser : public CustomBufferParser<GarageCommand> {
-
-    public:
-        GarageCommandParser(GarageDoorBridge& parent): _parent(parent) {};
-
-        ProtocolBuffer* parseBuffer(const GarageCommand*, int clientID) const;
-
-    private:
-        GarageDoorBridge& _parent;
-    };
-
-
-    /**
-     * Parser class to handle garage history requests
-     */
-    class GarageHistoryParser : public CustomBufferParser<GarageHistoryRequest> {
-
-    public:
-        GarageHistoryParser(GarageDoorBridge& parent): _parent(parent) {};
-
-        ProtocolBuffer* parseBuffer(const GarageHistoryRequest* history, int clientID) const;
-
-    private:
-        GarageDoorBridge& _parent;
-    };
-
-
+    friend class GarageHistoryParser;
 };
 
 #endif

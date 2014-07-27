@@ -1,11 +1,16 @@
 #include "GarageDoorBridge.h"
 
 //standard library
-#include <chrono>
 #include <sstream>
 
 //Constants
 #include "GarageConstants.h"
+
+//Parsers
+#include "GarageStatusParser.h"
+#include "GarageMetaParser.h"
+#include "GarageCommandParser.h"
+#include "GarageHistoryParser.h"
 
 
 using namespace std;
@@ -83,6 +88,9 @@ void GarageDoorBridge::registerParsers() {
         " returned: " << (registerSuccess ? "Success" : "Failue") << endl;
 }
 
+int GarageDoorBridge::getDoorCount() const {
+    return doorCount;
+}
 
 /* ##Database Methods## */
 /* -------------------- */
@@ -250,98 +258,3 @@ int GarageDoorBridge::addGarageHistory(int garageId, bool didClose) {
     return result;
 }
 
-
-/* ##Simple Helper Methods## */
-/* ------------------------- */
-uint32_t GarageDoorBridge::timeSinceEpoch() {
-    return std::chrono::duration_cast<std::chrono::seconds>
-        (std::chrono::system_clock::now().time_since_epoch()).count();
-}
-
-
-/* ##Parser Subclasses## */
-/* --------------------- */
-ProtocolBuffer* GarageDoorBridge::GarageMetaParser::
-parseBuffer(const GarageMetaData*, int) const {
-    GarageMetaData* metaData = new GarageMetaData();
-
-    metaData->set_doorcount(_parent.doorCount);
-
-    cout << "Sending back meta data. Garage number: " <<
-        to_string(_parent.doorCount) << endl;
-    return metaData;
-}
-
-
-ProtocolBuffer* GarageDoorBridge::GarageStatusParser::
-parseBuffer(const GarageStatus*, int) const {
-    GarageStatus* status = new GarageStatus();
-
-    for (int i = 0; i < 2; ++i) {
-        GarageStatus::DoorStatus* door = status->add_doors();
-        door->set_timestamp(1);
-        door->set_garageid(i);
-        door->set_isclosed((i%2)==0);
-        //These doors dont need a unique ID but it is a required field
-        door->set_uniqueid(0);
-    }
-
-    cout << "Sending back garage status data" << endl;
-    return status;
-}
-
-
-ProtocolBuffer* GarageDoorBridge::GarageCommandParser::
-parseBuffer(const GarageCommand* command, int) const {
-    //TODO: Do something with the garage open command.
-
-    cout << "Got a garage trigger request... trigger door "  << 
-        to_string(command->garageid()) << endl;
-    //Just send back a confirmation that we parsed successfully
-
-    GarageStatus* status = new GarageStatus();
-
-    for (int i = 0; i < 2; ++i) {
-        GarageStatus::DoorStatus* door = status->add_doors();
-        door->set_timestamp(1);
-        door->set_garageid(i);
-        door->set_isclosed((i%2)==1);
-        //These doors dont need a unique ID but it is a required field
-        door->set_uniqueid(0);
-    }
-    string groupId = "garage"; 
-    cout << "Sending back garage status data" << endl;
-
-    PiMessage message(9999, *status);
-    delete status;
-    _parent.clientManager.sendMessageToGroup(message, groupId);
-
-    _parent.addGarageHistory(command->garageid(), true);
-    return NULL;
-}
-
-
-ProtocolBuffer* GarageDoorBridge::GarageHistoryParser::
-parseBuffer(const GarageHistoryRequest* command, int) const {
-    int32_t startTime = _parent.timeSinceEpoch(); //The current time
-    int32_t interval = -60*60*24; //Negative 24 hours
-
-    if (command->has_starttime() && command->has_interval()) {
-        startTime = command->starttime();
-        interval = command->interval();
-    }else if (command->has_starttime()) {
-        //startTime and no interval
-        startTime = command->starttime();
-        interval = -interval;
-    }else if (command->has_interval()) {
-        //interval and no startTime
-        interval = -abs(command->interval());
-    }
-    cout << "Requesting history with interval: " << to_string(startTime)
-        << " to " << to_string(startTime+interval) << endl;
-
-    GarageStatus* buffer = _parent.getGarageHistory(startTime, interval);
-    cout << "Received " << to_string(buffer->doors_size()) << " doors to send." << endl;
-
-    return buffer;
-}
