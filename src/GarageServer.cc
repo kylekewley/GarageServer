@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
     doors.push_back(leftDoor);
     doors.push_back(middleDoor);
 
-	thread *t1 = new thread([piServer, portNumber]() mutable {piServer.connectToPort(portNumber); });
+	thread *t1 = new thread([&piServer, portNumber]() mutable {piServer.connectToPort(portNumber); });
     GarageDoorBridge(piServer.getClientManager(), doors);
 
 	delete t1;
