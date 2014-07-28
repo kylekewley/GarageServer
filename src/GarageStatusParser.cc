@@ -8,13 +8,11 @@ ProtocolBuffer* GarageStatusParser::
 parseBuffer(const GarageStatus*, int) const {
     GarageStatus* status = new GarageStatus();
 
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < _parent.getDoorCount(); ++i) {
         GarageStatus::DoorStatus* door = status->add_doors();
-        door->set_timestamp(1);
+        door->set_timestamp(0);
         door->set_garageid(i);
-        door->set_isclosed((i%2)==0);
-        //These doors dont need a unique ID but it is a required field
-        door->set_uniqueid(0);
+        door->set_isclosed(_parent.garageIsClosed(i));
     }
 
     cout << "Sending back garage status data" << endl;

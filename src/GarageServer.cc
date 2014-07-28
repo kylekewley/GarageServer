@@ -3,6 +3,7 @@
 #include <PiServer/PiServer.h>
 
 #include "GarageDoorBridge.h"
+#include "GarageDoor.h"
 
 #define DEFAULT_PORT_NUMBER     10002
 using namespace std;
@@ -45,7 +46,18 @@ int main(int argc, char **argv) {
     PiServer piServer = PiServer();
 
     //Right now, the bridge just registers parsers with the PiParser object 
-    GarageDoorBridge(piServer.getClientManager()); 
+    vector<GarageDoor> doors;
+
+    string leftDoorName("Left Door");
+    string middleDoorName("Middle Door");
+
+    GarageDoor leftDoor(leftDoorName, 13, 11);
+    GarageDoor middleDoor(middleDoorName, 14, 10);
+
+    doors.push_back(leftDoor);
+    doors.push_back(middleDoor);
+
+    GarageDoorBridge(piServer.getClientManager(), doors);
 
 
     piServer.connectToPort(portNumber);

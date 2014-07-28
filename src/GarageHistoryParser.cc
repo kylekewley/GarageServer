@@ -1,12 +1,11 @@
 #include "GarageHistoryParser.h"
 
 #include <string>
-#include <chrono>
 using namespace std;
 
 ProtocolBuffer* GarageHistoryParser::
 parseBuffer(const GarageHistoryRequest* command, int) const {
-    int32_t startTime = timeSinceEpoch(); //The current time
+    int32_t startTime = _parent.timeSinceEpoch(); //The current time
     int32_t interval = -60*60*24; //Negative 24 hours
 
     if (command->has_starttime() && command->has_interval()) {
@@ -27,11 +26,4 @@ parseBuffer(const GarageHistoryRequest* command, int) const {
     cout << "Received " << to_string(buffer->doors_size()) << " doors to send." << endl;
 
     return buffer;
-}
-
-/* ##Simple Helper Methods## */
-/* ------------------------- */
-uint32_t GarageHistoryParser::timeSinceEpoch() const {
-    return std::chrono::duration_cast<std::chrono::seconds>
-        (std::chrono::system_clock::now().time_since_epoch()).count();
 }

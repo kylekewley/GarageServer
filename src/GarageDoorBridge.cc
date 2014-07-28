@@ -2,6 +2,8 @@
 
 //standard library
 #include <sstream>
+#include <iostream>
+#include <chrono>
 
 //Constants
 #include "GarageConstants.h"
@@ -11,6 +13,9 @@
 #include "GarageMetaParser.h"
 #include "GarageCommandParser.h"
 #include "GarageHistoryParser.h"
+
+//PiServer library
+#include "PiServer/PiMessage.h"
 
 
 using namespace std;
@@ -38,12 +43,13 @@ string GarageDoorBridge::getColumnName(HISTORY_COLUMN_NAMES column) {
     return result;
 }
 
-GarageDoorBridge::GarageDoorBridge(ClientManager& clientManager):
-    clientManager(clientManager) {
+GarageDoorBridge::GarageDoorBridge(ClientManager& clientManager, const vector<GarageDoor>& doors): clientManager(clientManager), _doors(doors) {
     //Register the default parsers
     registerParsers();
     int result = connectToDatabase(HISTORY_DATABASE_PATH, &database);
     cout << "Connection to database " << (result==SQLITE_OK ? "succeeded" : "failed") << " with code " << to_string(result) << endl;
+    createPinToIndexMap(_doors);
+    configureHardware();
 }
 
 void GarageDoorBridge::registerParsers() {
@@ -90,6 +96,21 @@ void GarageDoorBridge::registerParsers() {
 
 int GarageDoorBridge::getDoorCount() const {
     return doorCount;
+}
+
+
+int GarageDoorBridge::doorIndexToPin(int index) {
+    return _doors[index].getWiringPiInputPin();
+}
+
+int GarageDoorBridge::pinToDoorIndex(int pin) {
+    return pinToIndex[pin];
+}
+
+void GarageDoorBridge::createPinToIndexMap(const vector<GarageDoor>& doors) {
+    for (unsigned int i = 0; i < _doors.size(); i++) {
+        pinToIndex[doors[i].getWiringPiInputPin()] = i;
+    }
 }
 
 /* ##Database Methods## */
@@ -219,7 +240,7 @@ GarageStatus* GarageDoorBridge::getGarageHistory(int32_t startTime, int32_t time
         int32_t timestamp = sqlite3_column_int(preparedStatement, COLUMN_TIMESTAMP);
 
         GarageStatus_DoorStatus* door = garageStatus->add_doors();
-        door->set_garageid(garageId);
+        door->set_garageid(pinToDoorIndex(garageId));
         door->set_isclosed(didClose);
         door->set_timestamp(timestamp);
         door->set_uniqueid((uint32_t)rowId);
@@ -232,11 +253,11 @@ GarageStatus* GarageDoorBridge::getGarageHistory(int32_t startTime, int32_t time
 int GarageDoorBridge::addGarageHistory(int garageId, bool didClose) {
     stringstream query;
     query << "INSERT INTO " << HISTORY_TABLE_NAME << " (" 
-          << getColumnName(COLUMN_GARAGE_ID) << ", "
-          << getColumnName(COLUMN_DID_CLOSE) << ") "
-          << "VALUES (" 
-          << to_string(garageId) << ", "
-          << to_string(didClose) << ");";
+        << getColumnName(COLUMN_GARAGE_ID) << ", "
+        << getColumnName(COLUMN_DID_CLOSE) << ") "
+        << "VALUES (" 
+        << to_string(doorIndexToPin(garageId)) << ", "
+        << to_string(didClose) << ");";
 
     sqlite3_stmt* preparedStatement;
     int result = sqlite3_prepare_v2(database, query.str().c_str(), query.str().length(), &preparedStatement, NULL);
@@ -258,3 +279,73 @@ int GarageDoorBridge::addGarageHistory(int garageId, bool didClose) {
     return result;
 }
 
+/* ##Simple Helper Methods## */
+/* ------------------------- */
+uint32_t GarageDoorBridge::timeSinceEpoch() const {
+    return std::chrono::duration_cast<std::chrono::seconds>
+        (std::chrono::system_clock::now().time_since_epoch()).count();
+}
+
+bool GarageDoorBridge::configureHardware() {
+    //Initialize the wiringPi library
+    if (wiringPiSetup()) {
+        cerr << "Error setting up the wiring pi library. The garage doors will not work." << endl;
+        return false;
+    }
+
+    //Setup the i/o pins
+    for (const GarageDoor& door : _doors) {
+        //Pullup input for the doors
+        pinMode(door.getWiringPiInputPin(), INPUT);
+
+        //Configure relay pins for output
+        pinMode(door.getWiringPiControlPin(), OUTPUT);
+        digitalWrite(door.getWiringPiControlPin(), HIGH);
+
+        //Setup the function callbacks for pin changes
+        wiringPiISR(door.getWiringPiInputPin(), INT_EDGE_FALLING, static_cast<void*>(this), &doorInputFalling);
+        wiringPiISR(door.getWiringPiInputPin(), INT_EDGE_RISING, static_cast<void*>(this), &doorInputRising);
+    }
+
+
+    return true;
+}
+
+void GarageDoorBridge::doorStatusChanged(bool didClose, int pin) {
+    GarageStatus status;
+    int doorIndex = pinToDoorIndex(pin);
+
+    GarageStatus_DoorStatus* door = status.add_doors();
+    door->set_garageid(doorIndex);
+    door->set_isclosed(didClose);
+    door->set_timestamp(timeSinceEpoch());
+
+    PiMessage message(CLIENT_STATUS_PARSER_ID, status);
+    clientManager.sendMessageToGroup(message, GARAGE_GROUP_ID);
+
+    addGarageHistory(doorIndex, didClose);
+}
+
+void GarageDoorBridge::triggerGarageDoor(int doorIndex) {
+    int relayPin = _doors[doorIndex].getWiringPiControlPin();
+
+    digitalWrite(relayPin, LOW);
+    delay(250);
+    digitalWrite(relayPin, HIGH);
+}
+
+bool GarageDoorBridge::garageIsClosed(int doorIndex) {
+    return digitalRead(doorIndexToPin(doorIndex)) == HIGH;
+}
+
+void GarageDoorBridge::doorInputFalling(int pin, void* ptr) {
+    GarageDoorBridge* doorBridge = static_cast<GarageDoorBridge*>(ptr);
+
+    doorBridge->doorStatusChanged(false, pin);
+}
+
+void GarageDoorBridge::doorInputRising(int pin, void* ptr) {
+    GarageDoorBridge* doorBridge = static_cast<GarageDoorBridge*>(ptr);
+
+    doorBridge->doorStatusChanged(true, pin);
+}

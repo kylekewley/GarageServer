@@ -17,10 +17,6 @@ class GarageHistoryParser : public CustomBufferParser<GarageHistoryRequest> {
     private:
         GarageDoorBridge& _parent;
 
-        /**
-         * @return  The current unix epoch time in seconds
-         */
-        uint32_t timeSinceEpoch() const;
 };
 
 #endif

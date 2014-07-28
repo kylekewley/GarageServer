@@ -11,6 +11,7 @@ parseBuffer(const GarageCommand* command, int) const {
     cout << "Got a garage trigger request... trigger door "  <<
         to_string(command->garageid()) << endl;
     //Just send back a confirmation that we parsed successfully
+    _parent.triggerGarageDoor(command->garageid());
 
     return NULL;
 }
