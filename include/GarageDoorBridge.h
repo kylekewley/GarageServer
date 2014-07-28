@@ -187,9 +187,9 @@ class GarageDoorBridge {
          * Adds a history row to the database and notifies any clients of the change.
          *
          * @param didClose  true if the door closed.
-         * @param pin       The GPIO input pin where the status changed
+		 * @param index	The index of the door that changed.
          */
-        void doorStatusChanged(bool didClose, int pin);
+        void doorStatusChanged(bool didClose, int index);
 
 
         static void doorInputFalling(int pin, void* ptr);

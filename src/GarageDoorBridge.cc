@@ -310,19 +310,18 @@ bool GarageDoorBridge::configureHardware() {
     return true;
 }
 
-void GarageDoorBridge::doorStatusChanged(bool didClose, int pin) {
+void GarageDoorBridge::doorStatusChanged(bool didClose, int index) {
     GarageStatus status;
-    int doorIndex = pinToDoorIndex(pin);
 
     GarageStatus_DoorStatus* door = status.add_doors();
-    door->set_garageid(doorIndex);
+    door->set_garageid(index);
     door->set_isclosed(didClose);
     door->set_timestamp(timeSinceEpoch());
 
     PiMessage message(CLIENT_STATUS_PARSER_ID, status);
     clientManager.sendMessageToGroup(message, GARAGE_GROUP_ID);
 
-    addGarageHistory(doorIndex, didClose);
+    addGarageHistory(index, didClose);
 }
 
 void GarageDoorBridge::triggerGarageDoor(int doorIndex) {
