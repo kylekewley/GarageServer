@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iostream>
 #include <chrono>
+#include <thread>
 
 //Constants
 #include "GarageConstants.h"
@@ -43,7 +44,7 @@ string GarageDoorBridge::getColumnName(HISTORY_COLUMN_NAMES column) {
     return result;
 }
 
-GarageDoorBridge::GarageDoorBridge(ClientManager& clientManager, const vector<GarageDoor>& doors): clientManager(clientManager), _doors(doors) {
+GarageDoorBridge::GarageDoorBridge(ClientManager& clientManager, vector<GarageDoor>& doors): clientManager(clientManager), _doors(doors) {
     //Register the default parsers
     registerParsers();
     int result = connectToDatabase(HISTORY_DATABASE_PATH, &database);
@@ -294,7 +295,8 @@ bool GarageDoorBridge::configureHardware() {
     }
 
     //Setup the i/o pins
-    for (const GarageDoor& door : _doors) {
+    for (unsigned int i = 0; i < _doors.size(); i++) {
+        GarageDoor& door = _doors[i];
         //Pullup input for the doors
         pinMode(door.getWiringPiInputPin(), INPUT);
 
@@ -302,12 +304,11 @@ bool GarageDoorBridge::configureHardware() {
         pinMode(door.getWiringPiControlPin(), OUTPUT);
         digitalWrite(door.getWiringPiControlPin(), HIGH);
 
-        //Setup the function callbacks for pin changes
-        wiringPiISR(door.getWiringPiInputPin(), INT_EDGE_FALLING, static_cast<void*>(this), &doorInputFalling);
-        wiringPiISR(door.getWiringPiInputPin(), INT_EDGE_RISING, static_cast<void*>(this), &doorInputRising);
+        door.setClosed(garageIsClosed(i));
     }
 
-
+    //Start the thread that checks door status changes
+    thread(&GarageDoorBridge::watchGarageStatus, *this);
     return true;
 }
 
@@ -348,4 +349,17 @@ void GarageDoorBridge::doorInputRising(int pin, void* ptr) {
     GarageDoorBridge* doorBridge = static_cast<GarageDoorBridge*>(ptr);
 
     doorBridge->doorStatusChanged(true, pin);
+}
+
+void GarageDoorBridge::watchGarageStatus() {
+    for (unsigned int i = 0; i < _doors.size(); i++) {
+        GarageDoor& door = _doors[i];
+        bool previousStatus = door.getClosed();
+        bool currentStatus = garageIsClosed(i);
+
+        if (previousStatus != currentStatus) {
+            door.setClosed(currentStatus);
+            doorStatusChanged(currentStatus, i);
+        }
+    }
 }

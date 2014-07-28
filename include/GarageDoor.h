@@ -14,10 +14,14 @@ class GarageDoor {
         int getWiringPiInputPin() const {return wiringPiInputPin;};
         int getWiringPiControlPin() const {return wiringPiControlPin;};
 
+        bool getClosed() const {return isClosed;};
+        void setClosed(bool closed) {isClosed=closed;};
+
     private:
         const string doorName;
         const int wiringPiInputPin;
         const int wiringPiControlPin;
+        bool isClosed;
 };
 
 #endif

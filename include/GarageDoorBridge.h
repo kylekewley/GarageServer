@@ -36,7 +36,7 @@ class GarageDoorBridge {
          * @param clientManager   The manager used to communicate with clients.
          * @param doors     A list of garage door objects to control/monitor.
          */
-        GarageDoorBridge(ClientManager& clientManager, const vector<GarageDoor>& doors);
+        GarageDoorBridge(ClientManager& clientManager, vector<GarageDoor>& doors);
 
         int getDoorCount() const;
 
@@ -84,7 +84,7 @@ class GarageDoorBridge {
         /**
          * A list of garage doors to monitor and control
          */
-        const vector<GarageDoor> _doors;
+        vector<GarageDoor> _doors;
 
         /**
          * Map used to convert from GPIO pin to array index
@@ -196,6 +196,7 @@ class GarageDoorBridge {
 
         static void doorInputRising(int pin, void* ptr);
 
+        void watchGarageStatus();
 };
 
 #endif
