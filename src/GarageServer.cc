@@ -1,5 +1,6 @@
 #include <getopt.h>
 #include <sstream>
+#include <thread>
 #include <PiServer/PiServer.h>
 
 #include "GarageDoorBridge.h"
@@ -57,10 +58,10 @@ int main(int argc, char **argv) {
     doors.push_back(leftDoor);
     doors.push_back(middleDoor);
 
+	thread *t1 = new thread([piServer, portNumber]() mutable {piServer.connectToPort(portNumber); });
     GarageDoorBridge(piServer.getClientManager(), doors);
 
-
-    piServer.connectToPort(portNumber);
+	delete t1;
 
     return 0;
 }

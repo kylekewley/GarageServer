@@ -4,7 +4,6 @@
 #include <sstream>
 #include <iostream>
 #include <chrono>
-#include <thread>
 
 //Constants
 #include "GarageConstants.h"
@@ -51,6 +50,7 @@ GarageDoorBridge::GarageDoorBridge(ClientManager& clientManager, vector<GarageDo
     cout << "Connection to database " << (result==SQLITE_OK ? "succeeded" : "failed") << " with code " << to_string(result) << endl;
     createPinToIndexMap(_doors);
     configureHardware();
+	watchGarageStatus();
 }
 
 void GarageDoorBridge::registerParsers() {
@@ -307,8 +307,6 @@ bool GarageDoorBridge::configureHardware() {
         door.setClosed(garageIsClosed(i));
     }
 
-    //Start the thread that checks door status changes
-    thread(&GarageDoorBridge::watchGarageStatus, *this);
     return true;
 }
 
@@ -352,14 +350,18 @@ void GarageDoorBridge::doorInputRising(int pin, void* ptr) {
 }
 
 void GarageDoorBridge::watchGarageStatus() {
-    for (unsigned int i = 0; i < _doors.size(); i++) {
-        GarageDoor& door = _doors[i];
-        bool previousStatus = door.getClosed();
-        bool currentStatus = garageIsClosed(i);
+	unsigned int doorCount = _doors.size();
+	while (true) {
+		for (unsigned int i = 0; i < doorCount; i++) {
+			GarageDoor& door = _doors[i];
+			bool previousStatus = door.getClosed();
+			bool currentStatus = garageIsClosed(i);
 
-        if (previousStatus != currentStatus) {
-            door.setClosed(currentStatus);
-            doorStatusChanged(currentStatus, i);
-        }
-    }
+			if (previousStatus != currentStatus) {
+				door.setClosed(currentStatus);
+				doorStatusChanged(currentStatus, i);
+				cout << "Status Changed" << endl;
+			}
+		}
+	}
 }
