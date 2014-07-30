@@ -328,7 +328,7 @@ void GarageDoorBridge::triggerGarageDoor(int doorIndex) {
     int relayPin = _doors[doorIndex].getWiringPiControlPin();
 
     digitalWrite(relayPin, LOW);
-    delay(250);
+    delay(150);
     digitalWrite(relayPin, HIGH);
 }
 
@@ -362,5 +362,6 @@ void GarageDoorBridge::watchGarageStatus() {
 				cout << "Status Changed" << endl;
 			}
 		}
+        delay(100);
 	}
 }
