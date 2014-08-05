@@ -311,12 +311,8 @@ bool GarageDoorBridge::configureHardware() {
         door.setClosed(garageIsClosed(i));
     }
 
-<<<<<<< HEAD
     //Start the thread that checks door status changes
-    thread t1(&GarageDoorBridge::watchGarageStatus, *this);
-    t1.get_id();
-=======
->>>>>>> 3a3499cc60da2b8fac250faa65829758937bdc11
+    watchGarageStatus();
     return true;
 }
 
