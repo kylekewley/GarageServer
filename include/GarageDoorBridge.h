@@ -55,7 +55,10 @@ class GarageDoorBridge {
         void triggerGarageDoor(int doorIndex);
 
         bool garageIsClosed(int doorIndex);
+
+        const vector<GarageDoor>& getDoors();
     private:
+
         /**
          * Test value for the server.
          * We will need the GPIO pin number for each door
@@ -71,6 +74,7 @@ class GarageDoorBridge {
          * The filepath for the database
          */
         static const string HISTORY_DATABASE_PATH;
+
         /**
          * The ClientManager that is used to send messages to clients.
          */

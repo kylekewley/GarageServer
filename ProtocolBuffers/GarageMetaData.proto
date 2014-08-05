@@ -1,3 +1,8 @@
 message GarageMetaData {
-    optional int32 doorCount = 1;
+    message GarageDoor {
+        required string doorName = 1;
+        required uint32 positionId = 2;
+    }
+
+    repeated GarageDoor doors = 1;
 }

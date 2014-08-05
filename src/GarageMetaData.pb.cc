@@ -21,6 +21,9 @@ namespace {
 const ::google::protobuf::Descriptor* GarageMetaData_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   GarageMetaData_reflection_ = NULL;
+const ::google::protobuf::Descriptor* GarageMetaData_GarageDoor_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  GarageMetaData_GarageDoor_reflection_ = NULL;
 
 }  // namespace
 
@@ -33,7 +36,7 @@ void protobuf_AssignDesc_GarageMetaData_2eproto() {
   GOOGLE_CHECK(file != NULL);
   GarageMetaData_descriptor_ = file->message_type(0);
   static const int GarageMetaData_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageMetaData, doorcount_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageMetaData, doors_),
   };
   GarageMetaData_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -46,6 +49,22 @@ void protobuf_AssignDesc_GarageMetaData_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(GarageMetaData));
+  GarageMetaData_GarageDoor_descriptor_ = GarageMetaData_descriptor_->nested_type(0);
+  static const int GarageMetaData_GarageDoor_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageMetaData_GarageDoor, doorname_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageMetaData_GarageDoor, positionid_),
+  };
+  GarageMetaData_GarageDoor_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      GarageMetaData_GarageDoor_descriptor_,
+      GarageMetaData_GarageDoor::default_instance_,
+      GarageMetaData_GarageDoor_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageMetaData_GarageDoor, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GarageMetaData_GarageDoor, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(GarageMetaData_GarageDoor));
 }
 
 namespace {
@@ -60,6 +79,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     GarageMetaData_descriptor_, &GarageMetaData::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    GarageMetaData_GarageDoor_descriptor_, &GarageMetaData_GarageDoor::default_instance());
 }
 
 }  // namespace
@@ -67,6 +88,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void protobuf_ShutdownFile_GarageMetaData_2eproto() {
   delete GarageMetaData::default_instance_;
   delete GarageMetaData_reflection_;
+  delete GarageMetaData_GarageDoor::default_instance_;
+  delete GarageMetaData_GarageDoor_reflection_;
 }
 
 void protobuf_AddDesc_GarageMetaData_2eproto() {
@@ -76,12 +99,16 @@ void protobuf_AddDesc_GarageMetaData_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\024GarageMetaData.proto\"#\n\016GarageMetaData"
-    "\022\021\n\tdoorCount\030\001 \001(\005", 59);
+    "\n\024GarageMetaData.proto\"o\n\016GarageMetaData"
+    "\022)\n\005doors\030\001 \003(\0132\032.GarageMetaData.GarageD"
+    "oor\0322\n\nGarageDoor\022\020\n\010doorName\030\001 \002(\t\022\022\n\np"
+    "ositionId\030\002 \002(\r", 135);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "GarageMetaData.proto", &protobuf_RegisterTypes);
   GarageMetaData::default_instance_ = new GarageMetaData();
+  GarageMetaData_GarageDoor::default_instance_ = new GarageMetaData_GarageDoor();
   GarageMetaData::default_instance_->InitAsDefaultInstance();
+  GarageMetaData_GarageDoor::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_GarageMetaData_2eproto);
 }
 
@@ -95,7 +122,273 @@ struct StaticDescriptorInitializer_GarageMetaData_2eproto {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int GarageMetaData::kDoorCountFieldNumber;
+const int GarageMetaData_GarageDoor::kDoorNameFieldNumber;
+const int GarageMetaData_GarageDoor::kPositionIdFieldNumber;
+#endif  // !_MSC_VER
+
+GarageMetaData_GarageDoor::GarageMetaData_GarageDoor()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void GarageMetaData_GarageDoor::InitAsDefaultInstance() {
+}
+
+GarageMetaData_GarageDoor::GarageMetaData_GarageDoor(const GarageMetaData_GarageDoor& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void GarageMetaData_GarageDoor::SharedCtor() {
+  _cached_size_ = 0;
+  doorname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  positionid_ = 0u;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+GarageMetaData_GarageDoor::~GarageMetaData_GarageDoor() {
+  SharedDtor();
+}
+
+void GarageMetaData_GarageDoor::SharedDtor() {
+  if (doorname_ != &::google::protobuf::internal::kEmptyString) {
+    delete doorname_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void GarageMetaData_GarageDoor::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* GarageMetaData_GarageDoor::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return GarageMetaData_GarageDoor_descriptor_;
+}
+
+const GarageMetaData_GarageDoor& GarageMetaData_GarageDoor::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_GarageMetaData_2eproto();
+  return *default_instance_;
+}
+
+GarageMetaData_GarageDoor* GarageMetaData_GarageDoor::default_instance_ = NULL;
+
+GarageMetaData_GarageDoor* GarageMetaData_GarageDoor::New() const {
+  return new GarageMetaData_GarageDoor;
+}
+
+void GarageMetaData_GarageDoor::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_doorname()) {
+      if (doorname_ != &::google::protobuf::internal::kEmptyString) {
+        doorname_->clear();
+      }
+    }
+    positionid_ = 0u;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool GarageMetaData_GarageDoor::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required string doorName = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_doorname()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->doorname().data(), this->doorname().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(16)) goto parse_positionId;
+        break;
+      }
+
+      // required uint32 positionId = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_positionId:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &positionid_)));
+          set_has_positionid();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void GarageMetaData_GarageDoor::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required string doorName = 1;
+  if (has_doorname()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->doorname().data(), this->doorname().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->doorname(), output);
+  }
+
+  // required uint32 positionId = 2;
+  if (has_positionid()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->positionid(), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* GarageMetaData_GarageDoor::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required string doorName = 1;
+  if (has_doorname()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->doorname().data(), this->doorname().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->doorname(), target);
+  }
+
+  // required uint32 positionId = 2;
+  if (has_positionid()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->positionid(), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int GarageMetaData_GarageDoor::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required string doorName = 1;
+    if (has_doorname()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->doorname());
+    }
+
+    // required uint32 positionId = 2;
+    if (has_positionid()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->positionid());
+    }
+
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void GarageMetaData_GarageDoor::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const GarageMetaData_GarageDoor* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const GarageMetaData_GarageDoor*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void GarageMetaData_GarageDoor::MergeFrom(const GarageMetaData_GarageDoor& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_doorname()) {
+      set_doorname(from.doorname());
+    }
+    if (from.has_positionid()) {
+      set_positionid(from.positionid());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void GarageMetaData_GarageDoor::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void GarageMetaData_GarageDoor::CopyFrom(const GarageMetaData_GarageDoor& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GarageMetaData_GarageDoor::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+
+  return true;
+}
+
+void GarageMetaData_GarageDoor::Swap(GarageMetaData_GarageDoor* other) {
+  if (other != this) {
+    std::swap(doorname_, other->doorname_);
+    std::swap(positionid_, other->positionid_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata GarageMetaData_GarageDoor::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = GarageMetaData_GarageDoor_descriptor_;
+  metadata.reflection = GarageMetaData_GarageDoor_reflection_;
+  return metadata;
+}
+
+
+// -------------------------------------------------------------------
+
+#ifndef _MSC_VER
+const int GarageMetaData::kDoorsFieldNumber;
 #endif  // !_MSC_VER
 
 GarageMetaData::GarageMetaData()
@@ -114,7 +407,6 @@ GarageMetaData::GarageMetaData(const GarageMetaData& from)
 
 void GarageMetaData::SharedCtor() {
   _cached_size_ = 0;
-  doorcount_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -149,9 +441,7 @@ GarageMetaData* GarageMetaData::New() const {
 }
 
 void GarageMetaData::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    doorcount_ = 0;
-  }
+  doors_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -162,17 +452,17 @@ bool GarageMetaData::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional int32 doorCount = 1;
+      // repeated .GarageMetaData.GarageDoor doors = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &doorcount_)));
-          set_has_doorcount();
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_doors:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_doors()));
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(10)) goto parse_doors;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -195,9 +485,10 @@ bool GarageMetaData::MergePartialFromCodedStream(
 
 void GarageMetaData::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // optional int32 doorCount = 1;
-  if (has_doorcount()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->doorcount(), output);
+  // repeated .GarageMetaData.GarageDoor doors = 1;
+  for (int i = 0; i < this->doors_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->doors(i), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -208,9 +499,11 @@ void GarageMetaData::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* GarageMetaData::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // optional int32 doorCount = 1;
-  if (has_doorcount()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->doorcount(), target);
+  // repeated .GarageMetaData.GarageDoor doors = 1;
+  for (int i = 0; i < this->doors_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->doors(i), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -223,15 +516,14 @@ void GarageMetaData::SerializeWithCachedSizes(
 int GarageMetaData::ByteSize() const {
   int total_size = 0;
 
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // optional int32 doorCount = 1;
-    if (has_doorcount()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->doorcount());
-    }
-
+  // repeated .GarageMetaData.GarageDoor doors = 1;
+  total_size += 1 * this->doors_size();
+  for (int i = 0; i < this->doors_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->doors(i));
   }
+
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -257,11 +549,7 @@ void GarageMetaData::MergeFrom(const ::google::protobuf::Message& from) {
 
 void GarageMetaData::MergeFrom(const GarageMetaData& from) {
   GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_doorcount()) {
-      set_doorcount(from.doorcount());
-    }
-  }
+  doors_.MergeFrom(from.doors_);
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
@@ -279,12 +567,15 @@ void GarageMetaData::CopyFrom(const GarageMetaData& from) {
 
 bool GarageMetaData::IsInitialized() const {
 
+  for (int i = 0; i < doors_size(); i++) {
+    if (!this->doors(i).IsInitialized()) return false;
+  }
   return true;
 }
 
 void GarageMetaData::Swap(GarageMetaData* other) {
   if (other != this) {
-    std::swap(doorcount_, other->doorcount_);
+    doors_.Swap(&other->doors_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

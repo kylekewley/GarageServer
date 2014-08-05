@@ -108,6 +108,10 @@ int GarageDoorBridge::pinToDoorIndex(int pin) {
     return pinToIndex[pin];
 }
 
+const vector<GarageDoor>& GarageDoorBridge::getDoors() {
+    return _doors;
+}
+
 void GarageDoorBridge::createPinToIndexMap(const vector<GarageDoor>& doors) {
     for (unsigned int i = 0; i < _doors.size(); i++) {
         pinToIndex[doors[i].getWiringPiInputPin()] = i;
@@ -308,7 +312,8 @@ bool GarageDoorBridge::configureHardware() {
     }
 
     //Start the thread that checks door status changes
-    thread(&GarageDoorBridge::watchGarageStatus, *this);
+    thread t1(&GarageDoorBridge::watchGarageStatus, *this);
+    t1.get_id();
     return true;
 }
 
