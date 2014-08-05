@@ -4,7 +4,6 @@
 #include <sstream>
 #include <iostream>
 #include <chrono>
-#include <thread>
 
 //Constants
 #include "GarageConstants.h"
@@ -51,6 +50,7 @@ GarageDoorBridge::GarageDoorBridge(ClientManager& clientManager, vector<GarageDo
     cout << "Connection to database " << (result==SQLITE_OK ? "succeeded" : "failed") << " with code " << to_string(result) << endl;
     createPinToIndexMap(_doors);
     configureHardware();
+	watchGarageStatus();
 }
 
 void GarageDoorBridge::registerParsers() {
@@ -311,32 +311,34 @@ bool GarageDoorBridge::configureHardware() {
         door.setClosed(garageIsClosed(i));
     }
 
+<<<<<<< HEAD
     //Start the thread that checks door status changes
     thread t1(&GarageDoorBridge::watchGarageStatus, *this);
     t1.get_id();
+=======
+>>>>>>> 3a3499cc60da2b8fac250faa65829758937bdc11
     return true;
 }
 
-void GarageDoorBridge::doorStatusChanged(bool didClose, int pin) {
+void GarageDoorBridge::doorStatusChanged(bool didClose, int index) {
     GarageStatus status;
-    int doorIndex = pinToDoorIndex(pin);
 
     GarageStatus_DoorStatus* door = status.add_doors();
-    door->set_garageid(doorIndex);
+    door->set_garageid(index);
     door->set_isclosed(didClose);
     door->set_timestamp(timeSinceEpoch());
 
     PiMessage message(CLIENT_STATUS_PARSER_ID, status);
     clientManager.sendMessageToGroup(message, GARAGE_GROUP_ID);
 
-    addGarageHistory(doorIndex, didClose);
+    addGarageHistory(index, didClose);
 }
 
 void GarageDoorBridge::triggerGarageDoor(int doorIndex) {
     int relayPin = _doors[doorIndex].getWiringPiControlPin();
 
     digitalWrite(relayPin, LOW);
-    delay(250);
+    delay(150);
     digitalWrite(relayPin, HIGH);
 }
 
@@ -357,14 +359,19 @@ void GarageDoorBridge::doorInputRising(int pin, void* ptr) {
 }
 
 void GarageDoorBridge::watchGarageStatus() {
-    for (unsigned int i = 0; i < _doors.size(); i++) {
-        GarageDoor& door = _doors[i];
-        bool previousStatus = door.getClosed();
-        bool currentStatus = garageIsClosed(i);
+	unsigned int doorCount = _doors.size();
+	while (true) {
+		for (unsigned int i = 0; i < doorCount; i++) {
+			GarageDoor& door = _doors[i];
+			bool previousStatus = door.getClosed();
+			bool currentStatus = garageIsClosed(i);
 
-        if (previousStatus != currentStatus) {
-            door.setClosed(currentStatus);
-            doorStatusChanged(currentStatus, i);
-        }
-    }
+			if (previousStatus != currentStatus) {
+				door.setClosed(currentStatus);
+				doorStatusChanged(currentStatus, i);
+				cout << "Status Changed" << endl;
+			}
+		}
+        delay(100);
+	}
 }
