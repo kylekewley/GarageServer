@@ -1,0 +1,3 @@
+message GarageNotificationRequest {
+    required string AppID
+}
